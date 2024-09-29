@@ -16,6 +16,10 @@ export const generatePassword = () => {
   return generatedPassword;
 };
 
+export const calculateFee = (amount: number) => {
+  return amount * 0.0199; // 1.99% fee
+};
+
 //TODO: Move this to services and perform calls with axios
 const apiEndpoint = "https://app.bananacrystal.com/api/users/sign_up";
 
