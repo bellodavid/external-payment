@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
           }
         }}
       >
-        <DialogContent className="flex flex-col w-[100vw] max-h-[80vh] bg-white p-0 overflow-hidden">
+        <DialogContent className="flex flex-col w-[100vw] max-h-[100vh] bg-white p-0 overflow-hidden">
           <div className="flex-1 px-0 overflow-y-auto scrollbar-hide">
             <USDTPayment
               storeId="luxury-boutique"
