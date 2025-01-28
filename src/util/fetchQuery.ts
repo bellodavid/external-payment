@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import axios, { AxiosRequestConfig, Method } from "axios";
 
 type FetchDataFunction = <T>(

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";

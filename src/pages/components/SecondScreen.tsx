@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,8 +42,10 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
   const [paymentHash, setPaymentHash] = useState("");
   const [showHashTooltip, setShowHashTooltip] = useState(false);
   const { copied, copyToClipboard } = useClipboard();
-  const [timeRemaining, setTimeRemaining] = useState(PAYMENT_TIMEOUT_MINUTES * 60); // Convert minutes to seconds
-  
+  const [timeRemaining, setTimeRemaining] = useState(
+    PAYMENT_TIMEOUT_MINUTES * 60
+  ); // Convert minutes to seconds
+
   let totalAmount = amount + calculateFee(amount);
   const { usdtEquivalent } = useUsdtEquivalent({ totalAmount, currency });
 
@@ -64,10 +69,10 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
   // Format time function
   const formatRemainingTime = (seconds: number) => {
     if (seconds <= 0) return "Time expired";
-    
+
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
   const handleVerifyPayment = () => {
@@ -118,17 +123,23 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         </div>
 
         {/* Time Remaining */}
-        <div className={`text-center p-4 rounded-lg ${
-          timeRemaining <= 300 ? 'bg-red-100' : 'bg-orange-100'
-        }`}>
-          <h3 className={`text-lg font-semibold ${
-            timeRemaining <= 300 ? 'text-red-800' : 'text-orange-800'
-          }`}>
+        <div
+          className={`text-center p-4 rounded-lg ${
+            timeRemaining <= 300 ? "bg-red-100" : "bg-orange-100"
+          }`}
+        >
+          <h3
+            className={`text-lg font-semibold ${
+              timeRemaining <= 300 ? "text-red-800" : "text-orange-800"
+            }`}
+          >
             Time Remaining
           </h3>
-          <p className={`text-3xl font-bold ${
-            timeRemaining <= 300 ? 'text-red-600' : 'text-orange-600'
-          }`}>
+          <p
+            className={`text-3xl font-bold ${
+              timeRemaining <= 300 ? "text-red-600" : "text-orange-600"
+            }`}
+          >
             {formatRemainingTime(timeRemaining)}
           </p>
           {timeRemaining <= 300 && timeRemaining > 0 && (

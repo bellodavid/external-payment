@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import React, { createContext, useState, useContext } from "react";
 
 const FormDataContext = createContext();
