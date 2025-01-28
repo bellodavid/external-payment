@@ -22,7 +22,7 @@
 import { useState, useEffect } from "react";
 
 interface UseUsdtEquivalentProps {
-  amount: number;
+  totalAmount: number;
   currency: string;
 }
 
@@ -34,7 +34,7 @@ interface UseUSDTEquivalentReturn {
 }
 
 export function useUsdtEquivalent({
-  amount = 100,
+  totalAmount,
   currency,
 }: UseUsdtEquivalentProps): UseUSDTEquivalentReturn {
   const [usdtEquivalent, setUsdtEquivalent] = useState<number | null>(null);
@@ -61,7 +61,7 @@ export function useUsdtEquivalent({
         throw new Error(`No USDT price found for ${currency}`);
       }
 
-      setUsdtEquivalent(amount / usdtPrice);
+      setUsdtEquivalent(totalAmount / usdtPrice);
     } catch (err) {
       console.error("Error fetching USDT equivalent:", err);
       setError(
@@ -74,7 +74,7 @@ export function useUsdtEquivalent({
 
   useEffect(() => {
     fetchUsdtEquivalent();
-  }, [amount, currency]);
+  }, [totalAmount, currency]);
 
   return {
     usdtEquivalent,

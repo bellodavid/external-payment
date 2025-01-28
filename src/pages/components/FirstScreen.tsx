@@ -1,48 +1,51 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import CustomPhoneInput from "@/components/CustomPhoneInput";
-import { useForm } from "@/hooks/useForm";
 
 interface FirstScreenProps {
   amount: number;
   currency: string;
   description: string;
-  onNext: (formData: any) => void;
+  formData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    signUpConsent: boolean;
+  };
+  errors: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+  };
+  isFormValid: boolean;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPhoneChange: (value: string) => void;
+  onNext: () => void;
 }
 
-/**
- * FirstScreen Component
- *
- * This component renders the first step of the payment process, collecting user information.
- *
- * @param {FirstScreenProps} props - The component props
- * @returns {React.ReactElement} The rendered component
- */
 const FirstScreen: React.FC<FirstScreenProps> = ({
   amount,
   currency,
   description,
+  formData,
+  errors,
+  isFormValid,
+  onInputChange,
+  onPhoneChange,
   onNext,
 }) => {
-  const [signUpConsent, setSignUpConsent] = useState(true);
-  const { formData, handleInputChange, handleSubmit } = useForm({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      signUpConsent: signUpConsent, // reference your state variable
-    },
-  });
-
   return (
     <>
-      <CardHeader className="bg-purple-700 text-white">
+    <div>
+      <CardHeader className="bg-[#4c3f84] text-white">
         <CardTitle>USDT Payment Checkout</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 p-6">
@@ -62,57 +65,90 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           </div>
         </div>
 
-        <Input
-          placeholder="First Name"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleInputChange}
-          required
-        />
-        <Input
-          placeholder="Last Name"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleInputChange}
-          required
-        />
-        <Input
-          type="email"
-          placeholder="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-        />
-        <CustomPhoneInput
-          value={formData.phoneNumber}
-          onChange={(value) =>
-            handleInputChange({ target: { name: "phoneNumber", value } })
-          }
-        />
-        <Input
-          placeholder="Address"
-          name="address"
-          value={formData.address}
-          onChange={handleInputChange}
-          required
-        />
+        <div>
+          <Input
+            placeholder="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={onInputChange}
+            required
+          />
+          {errors.firstName && (
+            <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+          )}
+        </div>
+
+        <div>
+          <Input
+            placeholder="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={onInputChange}
+            required
+          />
+          {errors.lastName && (
+            <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+          )}
+        </div>
+
+        <div>
+          <Input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={onInputChange}
+            required
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+          )}
+        </div>
+
+        <div>
+          <CustomPhoneInput
+            value={formData.phoneNumber}
+            onChange={onPhoneChange}
+          />
+          {errors.phoneNumber && (
+            <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>
+          )}
+        </div>
+
+        <div>
+          <Input
+            placeholder="Address"
+            name="address"
+            value={formData.address}
+            onChange={onInputChange}
+            required
+          />
+          {errors.address && (
+            <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+          )}
+        </div>
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="signup-consent"
             color="bg-purple-700"
-            checked={signUpConsent} // Reflect the current state value here
-            onCheckedChange={() => setSignUpConsent(!signUpConsent)}
+            checked={formData.signUpConsent}
+            onCheckedChange={(checked) => {
+              onInputChange({
+                target: { name: "signUpConsent", value: checked },
+              } as React.ChangeEvent<HTMLInputElement>);
+            }}
             className="rounded-sm border-gray-300 text-purple-600 focus:ring-purple-500"
           />
           <label htmlFor="signup-consent" className="text-xs text-gray-500">
-            Sign me up for BananaCrystal
+            Sign me up on BananaCrystal
           </label>
         </div>
 
         <Button
-          type="submit"
-          className="w-full bg-purple-700 hover:bg-purple-800"
+          onClick={onNext}
+          className="w-full bg-[#4c3f84] hover:bg-[#4c3f84]"
+          disabled={!isFormValid}
         >
           Next →
         </Button>
@@ -128,6 +164,7 @@ const FirstScreen: React.FC<FirstScreenProps> = ({
           </a>
         </div>
       </CardContent>
+      </div>
     </>
   );
 };

@@ -1,22 +1,30 @@
-export const Auth = {
-  signup: (user) => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+import { User } from "@/types";
+interface SignupResponse {
+  status: "success";
+}
 
-    var raw = JSON.stringify({
-      user: user,
+export const Auth = {
+  signup: async (user: User): Promise<SignupResponse> => {
+    const headers = new Headers({
+      "Content-Type": "application/json",
     });
 
-    var requestOptions = {
+    const requestOptions: RequestInit = {
       method: "POST",
-      headers: myHeaders,
-      body: raw,
+      headers,
+      body: JSON.stringify({ user }),
       redirect: "follow",
     };
 
-    return fetch(
-      `https://app.bananacrystal.com/api/users/sign_up`,
+    const response = await fetch(
+      "https://app.bananacrystal.com/api/users/sign_up",
       requestOptions
-    ).then((response) => response.json());
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
   },
 };

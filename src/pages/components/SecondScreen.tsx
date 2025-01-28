@@ -1,17 +1,11 @@
-// SecondScreen.tsx
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Check, Copy, HelpCircle } from "lucide-react";
 import { PaymentDetails } from "@/types";
-import {
-  formatTime,
-  calculateFee,
-  calculateTimeRemaining,
-} from "@/util/helpers";
+import { formatTime, calculateFee } from "@/util/helpers";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useUsdtEquivalent } from "@/hooks/useUsdtEquivalent";
 
@@ -22,34 +16,72 @@ interface SecondScreenProps {
   paymentDetails: PaymentDetails;
   onVerifyPayment: () => void;
   isLoading: boolean;
+  formData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    signUpConsent: boolean;
+  };
 }
 
-/**
- * SecondScreen Component
- *
- * This component renders the second step of the payment process, showing payment details
- * and handling the verification process.
- *
- * @param {SecondScreenProps} props - The component props
- * @returns {React.ReactElement} The rendered component
- */
+const PAYMENT_TIMEOUT_MINUTES = 30; // 30 minutes timeout
+
 const SecondScreen: React.FC<SecondScreenProps> = ({
   amount,
   currency,
   walletAddress,
   onVerifyPayment,
   isLoading,
+  formData,
 }) => {
   const [paymentHash, setPaymentHash] = useState("");
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showHashTooltip, setShowHashTooltip] = useState(false);
   const { copied, copyToClipboard } = useClipboard();
-  const { usdtEquivalent } = useUsdtEquivalent({ amount, currency });
-  const totalAmount = amount + calculateFee(amount);
-  const { expiresAt, timeRemaining } = calculateTimeRemaining();
+  const [timeRemaining, setTimeRemaining] = useState(PAYMENT_TIMEOUT_MINUTES * 60); // Convert minutes to seconds
+  
+  let totalAmount = amount + calculateFee(amount);
+  const { usdtEquivalent } = useUsdtEquivalent({ totalAmount, currency });
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (timeRemaining <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining]);
+
+  // Format time function
+  const formatRemainingTime = (seconds: number) => {
+    if (seconds <= 0) return "Time expired";
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleVerifyPayment = () => {
+    if (timeRemaining <= 0) {
+      // Handle expired payment session
+      alert("Payment session has expired. Please start over.");
+      return;
+    }
+    onVerifyPayment();
+  };
 
   return (
     <>
-      <CardHeader className="bg-purple-700 text-white">
+      <CardHeader className="bg-[#4c3f84] text-white">
         <CardTitle>USDT Payment Checkout</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 p-6">
@@ -86,13 +118,29 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         </div>
 
         {/* Time Remaining */}
-        <div className="text-center bg-orange-100 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-orange-800">
+        <div className={`text-center p-4 rounded-lg ${
+          timeRemaining <= 300 ? 'bg-red-100' : 'bg-orange-100'
+        }`}>
+          <h3 className={`text-lg font-semibold ${
+            timeRemaining <= 300 ? 'text-red-800' : 'text-orange-800'
+          }`}>
             Time Remaining
           </h3>
-          <p className="text-3xl font-bold text-orange-600">
-            {formatTime(timeRemaining)}
+          <p className={`text-3xl font-bold ${
+            timeRemaining <= 300 ? 'text-red-600' : 'text-orange-600'
+          }`}>
+            {formatRemainingTime(timeRemaining)}
           </p>
+          {timeRemaining <= 300 && timeRemaining > 0 && (
+            <p className="text-red-600 text-sm mt-1">
+              Payment session expiring soon!
+            </p>
+          )}
+          {timeRemaining <= 0 && (
+            <p className="text-red-600 text-sm mt-1">
+              Payment session expired. Please start over.
+            </p>
+          )}
         </div>
 
         {/* Recipient USDT Address */}
@@ -135,11 +183,11 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             <div className="relative inline-block ml-2">
               <HelpCircle
                 className="h-4 w-4 text-gray-400 cursor-help"
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                onClick={() => setShowTooltip(!showTooltip)}
+                onMouseEnter={() => setShowHashTooltip(true)}
+                onMouseLeave={() => setShowHashTooltip(false)}
+                onClick={() => setShowHashTooltip(!showHashTooltip)}
               />
-              {showTooltip && (
+              {showHashTooltip && (
                 <div className="absolute bg-black text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-64 z-10">
                   The transaction hash is a unique identifier for your USDT
                   transfer on the Polygon network. You can find it in your
@@ -169,15 +217,17 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
         </div>
 
         <Button
-          onClick={onVerifyPayment}
-          className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-          disabled={isLoading}
+          onClick={handleVerifyPayment}
+          className="w-full bg-[#4c3f84] hover:bg-[#4c3f84] text-white"
+          disabled={isLoading || timeRemaining <= 0}
         >
           {isLoading ? (
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
               <span className="ml-2">Processing...</span>
             </div>
+          ) : timeRemaining <= 0 ? (
+            "Session Expired"
           ) : (
             "I have paid"
           )}
