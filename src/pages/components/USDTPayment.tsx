@@ -5,9 +5,9 @@ import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Success } from "./Success";
 import FirstScreen from "./FirstScreen";
 import SecondScreen from "./SecondScreen";
+import Success from "./Success";
 
 const Loader = () => (
   <div className="flex items-center justify-center">
@@ -24,7 +24,7 @@ const mockVerifyPayment = async (paymentDetails) => {
         resolve({
           success: true,
           transactionId: `TX-${Math.random().toString(36).substr(2, 9)}`,
-          message: "Payment verified successfully"
+          message: "Payment verified successfully",
         });
       } else {
         reject(new Error("Payment verification failed. Please try again."));
@@ -87,14 +87,16 @@ const USDTPayment = ({
       address: "",
     };
 
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
+    if (!formData.phoneNumber.trim())
+      newErrors.phoneNumber = "Phone number is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
 
     setErrors(newErrors);
@@ -133,12 +135,11 @@ const USDTPayment = ({
 
       setTransactionData(response);
       setShowSuccessScreen(true);
-      
+
       // Call the onSuccess callback after a delay to allow the success screen to show
       setTimeout(() => {
         onSuccess && onSuccess(response.transactionId);
       }, 3000);
-      
     } catch (error) {
       setApiError(error.message);
     } finally {

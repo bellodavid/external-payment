@@ -1,21 +1,3 @@
-/**
- * AccountCreationModal Component
- *
- * @description
- * A reusable modal component for displaying account creation success
- * with options to verify email or proceed to checkout.
- *
- * @example
- * ```tsx
- * <AccountCreationModal
- *   show={showModal}
- *   onClose={() => setShowModal(false)}
- *   onVerify={() => handleEmailVerification()}
- *   onProceed={() => handleCheckout()}
- * />
- * ```
- */
-
 import React from "react";
 import {
   AlertDialog,
@@ -40,7 +22,7 @@ interface AccountCreationModalProps {
   verifyButtonText?: string;
 }
 
-export const AccountCreationModal: React.FC<AccountCreationModalProps> = ({
+const AccountCreationModal: React.FC<AccountCreationModalProps> = ({
   show,
   onClose,
   onVerify,
@@ -76,3 +58,5 @@ export const AccountCreationModal: React.FC<AccountCreationModalProps> = ({
     </AlertDialog>
   );
 };
+
+export default AccountCreationModal;

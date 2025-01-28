@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -14,7 +11,7 @@ interface SuccessProps {
   transactionId?: string;
 }
 
-export const Success: React.FC<SuccessProps> = ({
+const Success: React.FC<SuccessProps> = ({
   title = "Payment Successful",
   message = "Thank you for your payment. Your transaction has been completed successfully.",
   redirectUrl,
@@ -58,18 +55,21 @@ export const Success: React.FC<SuccessProps> = ({
                 <Check className="w-16 h-16 text-green-600" />
               </div>
             </div>
-            <p className="text-lg font-semibold text-gray-800 mb-2">{message}</p>
+            <p className="text-lg font-semibold text-gray-800 mb-2">
+              {message}
+            </p>
             {transactionId && (
               <p className="text-sm text-gray-600 mb-4">
                 Transaction ID: {transactionId}
               </p>
             )}
           </div>
-          
+
           {(redirectUrl || onRedirect) && (
             <div className="text-center">
               <p className="text-gray-600">
-                Redirecting{redirectUrl && " to merchant site"} in {countdown} seconds...
+                Redirecting{redirectUrl && " to merchant site"} in {countdown}{" "}
+                seconds...
               </p>
               <div className="w-full bg-gray-200 h-2 rounded-full mt-3">
                 <div
@@ -95,3 +95,5 @@ export const Success: React.FC<SuccessProps> = ({
     </div>
   );
 };
+
+export default Success;
