@@ -95,19 +95,19 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Amount:</span>
             <span className="font-semibold">
-              {amount.toFixed(2)} {currency}
+              {amount?.toFixed(2)} {currency}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Fee:</span>
             <span className="font-semibold text-orange-600">
-              {calculateFee(amount).toFixed(2)} {currency}
+              {calculateFee(amount)?.toFixed(2)} {currency}
             </span>
           </div>
           <div className="flex justify-between items-center border-t pt-2">
             <span className="text-gray-600">Total Amount:</span>
             <span className="font-semibold">
-              {totalAmount.toFixed(2)} {currency}
+              {totalAmount?.toFixed(2)} {currency}
             </span>
           </div>
         </div>
@@ -118,7 +118,7 @@ const SecondScreen: React.FC<SecondScreenProps> = ({
             USDT Equivalent
           </h3>
           <p className="text-3xl font-bold text-purple-900">
-            {usdtEquivalent?.toFixed(2) || totalAmount.toFixed(2)} USDT
+            {usdtEquivalent?.toFixed(2) || totalAmount?.toFixed(2)} USDT
           </p>
         </div>
 
